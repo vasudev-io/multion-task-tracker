@@ -31,12 +31,18 @@ export async function POST(req: NextRequest) {
     optional_params: optional_params || { source: "playground" }
   };
 
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 120000); // 120 seconds timeout
+
   try {
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: headers,
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
+      signal: controller.signal
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -45,7 +51,11 @@ export async function POST(req: NextRequest) {
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
+    clearTimeout(timeoutId);
     console.error('Error:', error);
+    if (error instanceof Error && error.name === 'AbortError') {
+      return NextResponse.json({ error: 'Request timed out after 120 seconds' }, { status: 504 });
+    }
     return NextResponse.json({ error: 'An error occurred while processing your request' }, { status: 500 });
   }
 }
