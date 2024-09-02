@@ -54,9 +54,10 @@ export default function ChatSupport() {
         body: JSON.stringify({
           userId,
           query: input,
-          url: 'https://www.google.com',
+          url: window.location.href,
           optional_params: {
-            source: "playground"
+            source: "task-tracker",
+            currentPage: window.location.pathname
           }
         }),
       });

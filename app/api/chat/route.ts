@@ -28,7 +28,15 @@ export async function POST(req: NextRequest) {
     url: url,
     cmd: query,
     user_id: userId,
-    optional_params: optional_params || { source: "playground" }
+    optional_params: {
+      ...optional_params,
+      appInfo: {
+        name: "Task Tracker",
+        version: "1.0.0",
+        currentUrl: url,
+        currentPage: optional_params.currentPage
+      }
+    }
   };
 
   const controller = new AbortController();
