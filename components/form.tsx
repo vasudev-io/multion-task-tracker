@@ -9,20 +9,39 @@ export default function TaskForm({ onAddTask }: { onAddTask: (task: { id: string
   const [label, setLabel] = useState("feature");
   const [priority, setPriority] = useState("medium");
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     const newTask = {
-      id: `TASK-${Math.floor(Math.random() * 10000)}`,
-      title,
-      status,
-      label,
-      priority,
+      id: `TASK-${Date.now()}`,
+      title: title,
+      status: status,
+      label: label,
+      priority: priority,
     };
-    onAddTask(newTask);
-    setTitle("");
-    setStatus("backlog");
-    setLabel("feature");
-    setPriority("medium");
+
+    try {
+      const response = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newTask),
+      });
+
+      if (response.ok) {
+        // Refresh the table data
+        //table.options.meta?.refreshData();
+        
+        // Reset form fields
+        setTitle("");
+        setStatus("backlog");
+        setLabel("feature");
+        setPriority("medium");
+      } else {
+        console.error('Failed to add task');
+      }
+    } catch (error) {
+      console.error('Error adding task:', error);
+    }
   };
 
   return (

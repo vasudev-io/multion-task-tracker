@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
 
   const { userId, query, url, optional_params } = await req.json();
 
+  // Check if user is authenticated
   if (!userId) {
     return NextResponse.json({ error: 'User not authenticated' }, { status: 401 });
   }
@@ -31,42 +32,31 @@ export async function POST(req: NextRequest) {
   };
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 180000); // 180 seconds timeout
+  const timeoutId = setTimeout(() => controller.abort(), 120000); // 120 seconds timeout
 
-  const maxRetries = 3;
-  let retries = 0;
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(payload),
+      signal: controller.signal
+    });
 
-  while (retries < maxRetries) {
-    try {
-      console.log(`Attempt ${retries + 1} to fetch data from Multion API`);
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify(payload),
-        signal: controller.signal
-      });
+    clearTimeout(timeoutId);
 
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return NextResponse.json(data);
-    } catch (error) {
-      clearTimeout(timeoutId);
-      console.error(`Error on attempt ${retries + 1}:`, error);
-      if (error instanceof Error && error.name === 'AbortError') {
-        return NextResponse.json({ error: 'Request timed out after 180 seconds' }, { status: 504 });
-      }
-      retries++;
-      if (retries >= maxRetries) {
-        return NextResponse.json({ error: 'Max retries reached. An error occurred while processing your request' }, { status: 500 });
-      }
-      // Wait for 2 seconds before retrying
-      await new Promise(resolve => setTimeout(resolve, 2000));
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    const data = await response.json();
+    return NextResponse.json(data);
+  } catch (error) {
+    clearTimeout(timeoutId);
+    console.error('Error:', error);
+    if (error instanceof Error && error.name === 'AbortError') {
+      return NextResponse.json({ error: 'Request timed out after 120 seconds' }, { status: 504 });
+    }
+    return NextResponse.json({ error: 'An error occurred while processing your request' }, { status: 500 });
   }
 }
 

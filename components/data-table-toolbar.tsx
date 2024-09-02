@@ -63,22 +63,22 @@ export function DataTableToolbar<TData>({
           </DrawerHeader>
           <div className="p-4 space-y-4">
             <Input
-              placeholder="Task Title"
+              placeholder="Task Title - e.g. 'Fix the bug'"
               value={taskTitle}
               onChange={(e) => setTaskTitle(e.target.value)}
             />
             <Input
-              placeholder="Status"
+              placeholder="Status - backlog, in progress, todo"
               value={taskStatus}
               onChange={(e) => setTaskStatus(e.target.value)}
             />
             <Input
-              placeholder="Label"
+              placeholder="Label - feature, bug, documentation"
               value={taskLabel}
               onChange={(e) => setTaskLabel(e.target.value)}
             />
             <Input
-              placeholder="Priority"
+              placeholder="Priority - low, medium, high"
               value={taskPriority}
               onChange={(e) => setTaskPriority(e.target.value)}
             />

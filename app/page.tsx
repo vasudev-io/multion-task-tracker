@@ -15,6 +15,15 @@ export default function TaskPage() {
   const [userId, setUserId] = useState<string | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
 
+  const fetchTasks = () => {
+    if (userId) {
+      fetch('/api/tasks')
+        .then(response => response.json())
+        .then(setTasks)
+        .catch(error => console.error('Error fetching tasks:', error));
+    }
+  };
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
@@ -34,13 +43,7 @@ export default function TaskPage() {
   }, []);
 
   useEffect(() => {
-    if (userId) {
-      // Fetch tasks from API
-      fetch('/api/tasks')
-        .then(response => response.json())
-        .then(setTasks)
-        .catch(error => console.error('Error fetching tasks:', error));
-    }
+    fetchTasks();
   }, [userId]);
 
   const exchangeCodeForToken = async (code: string) => {
@@ -94,7 +97,9 @@ export default function TaskPage() {
             )}
           </div>
         </div>
-        {userId && <DataTable data={tasks} columns={columns} />}
+        {userId && <DataTable data={tasks} columns={columns} meta={{
+          refreshData: fetchTasks
+        }} />}
       </div>
       {userId && <ChatSupport />}
     </>
