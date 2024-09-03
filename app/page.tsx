@@ -66,7 +66,7 @@ export default function TaskPage() {
 
   // Function to initiate Multion authentication
   const connectWithMultion = () => {
-    const orgId = process.env.NEXT_PUBLIC_MULTION_ORG_ID;
+    const orgId = process.env.MULTION_ORG_ID;
     const redirectUri = encodeURIComponent(window.location.origin);
     const multionAuthUrl = `https://platform.multion.ai/authorize?org_id=${orgId}&redirect_uri=${redirectUri}`;
     window.location.href = multionAuthUrl;

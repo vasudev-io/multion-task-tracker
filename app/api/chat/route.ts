@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // Environment variables for Multion API authentication
 const apiKey = process.env.MULTION_API_KEY;
-const orgId = process.env.NEXT_PUBLIC_MULTION_ORG_ID;
+const orgId = process.env.MULTION_ORG_ID;
 
 // Check if required environment variables are set
 if (!apiKey || !orgId) {
