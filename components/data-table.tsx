@@ -31,15 +31,11 @@ import { DataTableToolbar } from "./data-table-toolbar"
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
-  meta?: {
-    refreshData: () => void
-  }
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  meta
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
@@ -49,6 +45,11 @@ export function DataTable<TData, TValue>({
   )
   const [sorting, setSorting] = React.useState<SortingState>([])
 
+  const refreshData = React.useCallback(() => {
+    // Implement your data refresh logic here
+    console.log("Refreshing data...")
+  }, [])
+
   const table = useReactTable({
     data,
     columns,
@@ -57,6 +58,9 @@ export function DataTable<TData, TValue>({
       columnVisibility,
       rowSelection,
       columnFilters,
+    },
+    meta: {
+      refreshData,
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,

@@ -19,12 +19,5 @@
     "status": "todo",
     "label": "bug",
     "priority": "high"
-  },
-  {
-    "id": "TASK-5562",
-    "title": "The SAS interface is down, bypass the open-source pixel so we can back up the PNG bandwidth!",
-    "status": "backlog",
-    "label": "feature",
-    "priority": "medium"
   }
 ]

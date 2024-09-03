@@ -1,6 +1,6 @@
 "use client"
 
-import { ColumnDef, TableMeta } from "@tanstack/react-table"
+import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 
@@ -9,13 +9,7 @@ import { Task } from "../data/schema"
 import { DataTableColumnHeader } from "./data-table-column-header"
 import { DataTableRowActions } from "./data-table-row-actions"
 
-// Update the TaskTableMeta type
-type TaskTableMeta = TableMeta<Task> & {
-  refreshData: () => void
-}
-
-// Update the columns type
-export const columns: ColumnDef<Task, TaskTableMeta>[] = [
+export const columns: ColumnDef<Task>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -123,6 +117,11 @@ export const columns: ColumnDef<Task, TaskTableMeta>[] = [
   },
   {
     id: "actions",
-    cell: ({ row, table }) => <DataTableRowActions row={row} refreshData={table.options.meta?.refreshData} />,
+    cell: ({ row, table }) => (
+      <DataTableRowActions 
+        row={row} 
+        refreshData={(table.options.meta as { refreshData: () => void })?.refreshData} 
+      />
+    ),
   },
 ]
