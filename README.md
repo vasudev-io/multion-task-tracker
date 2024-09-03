@@ -29,10 +29,19 @@ This video demonstrates the key features of our Task Tracker application, includ
 
 ## Key Features
 
-- **User Authentication**: Seamless login using MultiOn Connect
-- **Task Management**: Create, read, update, and delete tasks
-- **AI Chat Support**: Intelligent assistance powered by MultiOn agents with web browsing capabilities
-- **Responsive Design**: Usere-friendly interface using Shadcn/ui components
+1. **TaskPage** (`app/page.tsx`): The main page component that handles MultiOn Connect user authentication and renders the task table.
+
+2. **DataTable** (`components/data-table.tsx`): A reusable component for displaying and managing tasks.
+
+3. **ChatSupport** (`components/chat-support.tsx`): An AI-powered chat interface for user assistance.
+
+4. **DB API Routes** (`app/api/tasks/route.ts`): Handles CRUD operations for tasks using Vercel KV storage.
+
+5. **MultiOn API Routes** (`app/api/chat/route.ts`): Handles interactions with the MultiOn API.
+
+6. **Responsive Design** (`components/ui`):: User-friendly interface using Shadcn/ui components
+
+See project structure below to find relevant pieces of code.
 
 ## Tech Stack
 
