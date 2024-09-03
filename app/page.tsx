@@ -12,9 +12,11 @@ import Image from 'next/image';
 import ChatSupport from "../components/chat-support";
 
 export default function TaskPage() {
+  // State for user ID and tasks
   const [userId, setUserId] = useState<string | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
 
+  // Function to fetch tasks from the API
   const fetchTasks = () => {
     if (userId) {
       fetch('/api/tasks')
@@ -24,6 +26,7 @@ export default function TaskPage() {
     }
   };
 
+  // Effect to handle authentication on component mount
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
@@ -42,10 +45,12 @@ export default function TaskPage() {
     }
   }, []);
 
+  // Effect to fetch tasks when userId changes
   useEffect(() => {
     fetchTasks();
   }, [userId]);
 
+  // Function to exchange authorization code for token
   const exchangeCodeForToken = async (code: string) => {
     try {
       const response = await fetch(`/api/chat?code=${code}`);
@@ -59,6 +64,7 @@ export default function TaskPage() {
     }
   };
 
+  // Function to initiate Multion authentication
   const connectWithMultion = () => {
     const orgId = process.env.NEXT_PUBLIC_MULTION_ORG_ID;
     const redirectUri = encodeURIComponent(window.location.origin);
@@ -66,6 +72,7 @@ export default function TaskPage() {
     window.location.href = multionAuthUrl;
   };
 
+  // Function to handle user sign out
   const handleSignOut = () => {
     setUserId(null);
     localStorage.removeItem('multion_user_id');

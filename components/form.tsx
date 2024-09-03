@@ -5,9 +5,9 @@ import { Button } from "./ui/button";
 
 export default function TaskForm({ onAddTask }: { onAddTask: (task: { id: string; title: string; status: string; label: string; priority: string }) => void }) {
   const [title, setTitle] = useState("");
-  const [status, setStatus] = useState("backlog");
-  const [label, setLabel] = useState("feature");
-  const [priority, setPriority] = useState("medium");
+  const [status, setStatus] = useState("");
+  const [label, setLabel] = useState("");
+  const [priority, setPriority] = useState("");
 
   const handleSubmit = async () => {
     const newTask = {
@@ -28,14 +28,12 @@ export default function TaskForm({ onAddTask }: { onAddTask: (task: { id: string
       });
 
       if (response.ok) {
-        // Refresh the table data
-        //table.options.meta?.refreshData();
-        
+       
         // Reset form fields
         setTitle("");
-        setStatus("backlog");
-        setLabel("feature");
-        setPriority("medium");
+        setStatus("");
+        setLabel("");
+        setPriority("");
       } else {
         console.error('Failed to add task');
       }

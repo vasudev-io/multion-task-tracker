@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Environment variables for Multion API authentication
 const apiKey = process.env.MULTION_API_KEY;
 const orgId = process.env.NEXT_PUBLIC_MULTION_ORG_ID;
 
+// Check if required environment variables are set
 if (!apiKey || !orgId) {
   console.error("MULTION_API_KEY or MULTION_ORG_ID is not set in the environment variables");
 }
 
+// POST endpoint for handling chat requests
 export async function POST(req: NextRequest) {
   if (!apiKey) {
     console.error('API key is not configured');
@@ -14,12 +17,15 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    // Extract request data
     const { userId, query, url, optional_params } = await req.json();
 
+    // Check if user is authenticated
     if (!userId) {
       return NextResponse.json({ error: 'User not authenticated' }, { status: 401 });
     }
 
+    // Prepare request to Multion API
     const endpoint = "https://api.multion.ai/v1/web/browse";
     const headers = {
       "X_MULTION_API_KEY": apiKey,
@@ -32,11 +38,13 @@ export async function POST(req: NextRequest) {
       optional_params: optional_params || { source: "playground" }
     };
 
+    // Set up request timeout
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 120000); // 120 seconds timeout
 
     console.log('Sending request to Multion API:', JSON.stringify(payload, null, 2));
 
+    // Send request to Multion API
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: headers,
@@ -46,12 +54,14 @@ export async function POST(req: NextRequest) {
 
     clearTimeout(timeoutId);
 
+    // Handle API errors
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`Multion API error: ${response.status} - ${errorText}`);
       throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
     }
 
+    // Process and return API response
     const data = await response.json();
     console.log('Multion API response:', JSON.stringify(data, null, 2));
     return NextResponse.json(data);
@@ -61,6 +71,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
+// GET endpoint for handling OAuth token exchange
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const code = searchParams.get('code');
@@ -70,7 +81,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    // Exchange the code for an access token
+    // Exchange the authorization code for an access token
     const tokenResponse = await fetch('https://platform.multion.ai/oauth/token', {
       method: 'POST',
       headers: {
@@ -90,8 +101,7 @@ export async function GET(req: NextRequest) {
 
     const tokenData = await tokenResponse.json();
 
-    // You might want to store the access token securely here
-
+    // Return success response with user ID
     return NextResponse.json({ success: true, userId: tokenData.user_id });
   } catch (error) {
     console.error('Error during token exchange:', error);

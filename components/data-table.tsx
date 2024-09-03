@@ -50,7 +50,6 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = React.useState<SortingState>([])
 
   const refreshData = React.useCallback(() => {
-    // Implement your data refresh logic here
     console.log("Refreshing data...")
   }, [])
 
@@ -63,7 +62,7 @@ export function DataTable<TData, TValue>({
       rowSelection,
       columnFilters,
     },
-    meta: meta, // Add this line
+    meta: meta, 
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
