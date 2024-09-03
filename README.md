@@ -6,7 +6,7 @@ This example includes a simple task tracker with a chat interface using the Mult
 
 ## Demo
 
-[![Task Tracker Demo](/assets/Task-Tracker-Demo.png)](https://youtu.be/xdHHyVTnG4E)
+[![Task Tracker Demo](/assets/Task-Tracker-Demo.gif)](https://youtu.be/xdHHyVTnG4E)
 
 This video demonstrates the key features of our Task Tracker application, including MultiOn Connect authentication, task management, and AI-powered chat support.
 
