@@ -1,10 +1,10 @@
 import { kv } from '@vercel/kv';
 import { NextRequest, NextResponse } from 'next/server';
-import { taskSchema } from '@/data/schema';
+import { taskSchema, Task } from '@/data/schema';
 import { z } from 'zod';
 
 export async function GET() {
-  const tasks = await kv.get('tasks') || [];
+  const tasks = await kv.get<Task[]>('tasks') || [];
   const parsedTasks = z.array(taskSchema).parse(tasks);
   return NextResponse.json(parsedTasks);
 }
@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
   try {
     const newTask = await req.json();
     const parsedTask = taskSchema.parse(newTask);
-    const tasks = await kv.get('tasks') || [];
+    const tasks = await kv.get<Task[]>('tasks') || [];
     tasks.push(parsedTask);
     await kv.set('tasks', tasks);
     return NextResponse.json({ message: 'Task added successfully' }, { status: 200 });
