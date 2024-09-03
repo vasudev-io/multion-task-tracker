@@ -56,8 +56,7 @@ export default function ChatSupport() {
           query: input,
           url: window.location.href,
           optional_params: {
-            source: "task-tracker",
-            currentPage: window.location.pathname
+            source: "playground"
           }
         }),
       });

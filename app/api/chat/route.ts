@@ -9,40 +9,34 @@ if (!apiKey || !orgId) {
 
 export async function POST(req: NextRequest) {
   if (!apiKey) {
+    console.error('API key is not configured');
     return NextResponse.json({ error: 'API key is not configured' }, { status: 500 });
   }
 
-  const { userId, query, url, optional_params } = await req.json();
-
-  // Check if user is authenticated
-  if (!userId) {
-    return NextResponse.json({ error: 'User not authenticated' }, { status: 401 });
-  }
-
-  const endpoint = "https://api.multion.ai/v1/web/browse";
-  const headers = {
-    "X_MULTION_API_KEY": apiKey,
-    "Content-Type": "application/json"
-  };
-  const payload = {
-    url: url,
-    cmd: query,
-    user_id: userId,
-    optional_params: {
-      ...optional_params,
-      appInfo: {
-        name: "Task Tracker",
-        version: "1.0.0",
-        currentUrl: url,
-        currentPage: optional_params.currentPage
-      }
-    }
-  };
-
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 120000); // 120 seconds timeout
-
   try {
+    const { userId, query, url, optional_params } = await req.json();
+
+    if (!userId) {
+      return NextResponse.json({ error: 'User not authenticated' }, { status: 401 });
+    }
+
+    const endpoint = "https://api.multion.ai/v1/web/browse";
+    const headers = {
+      "X_MULTION_API_KEY": apiKey,
+      "Content-Type": "application/json"
+    };
+    const payload = {
+      url: url,
+      cmd: query,
+      user_id: userId,
+      optional_params: optional_params || { source: "playground" }
+    };
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 120000); // 120 seconds timeout
+
+    console.log('Sending request to Multion API:', JSON.stringify(payload, null, 2));
+
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: headers,
@@ -53,18 +47,17 @@ export async function POST(req: NextRequest) {
     clearTimeout(timeoutId);
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorText = await response.text();
+      console.error(`Multion API error: ${response.status} - ${errorText}`);
+      throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
     }
 
     const data = await response.json();
+    console.log('Multion API response:', JSON.stringify(data, null, 2));
     return NextResponse.json(data);
   } catch (error) {
-    clearTimeout(timeoutId);
-    console.error('Error:', error);
-    if (error instanceof Error && error.name === 'AbortError') {
-      return NextResponse.json({ error: 'Request timed out after 120 seconds' }, { status: 504 });
-    }
-    return NextResponse.json({ error: 'An error occurred while processing your request' }, { status: 500 });
+    console.error('Error in POST /api/chat:', error);
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'An unknown error occurred' }, { status: 500 });
   }
 }
 
