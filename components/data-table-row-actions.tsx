@@ -23,12 +23,30 @@ import { taskSchema } from "../data/schema"
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>
+  refreshData: () => void
 }
 
 export function DataTableRowActions<TData>({
   row,
+  refreshData,
 }: DataTableRowActionsProps<TData>) {
   const task = taskSchema.parse(row.original)
+
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`/api/tasks?id=${task.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete task');
+      }
+
+      refreshData();
+    } catch (error) {
+      console.error('Error deleting task:', error);
+    }
+  };
 
   return (
     <DropdownMenu>
@@ -59,7 +77,7 @@ export function DataTableRowActions<TData>({
           </DropdownMenuSubContent>
         </DropdownMenuSub>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onSelect={handleDelete}>
           Delete
           <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
         </DropdownMenuItem>
