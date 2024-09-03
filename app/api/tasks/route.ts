@@ -32,7 +32,11 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'Task ID is required' }, { status: 400 });
     }
 
-    const tasks = await kv.get<Task[]>('tasks') || [];
+    const tasks = await kv.get<Task[]>('tasks');
+    if (!tasks) {
+      return NextResponse.json({ error: 'No tasks found' }, { status: 404 });
+    }
+
     const updatedTasks = tasks.filter((task) => task.id !== id);
     await kv.set('tasks', updatedTasks);
 
