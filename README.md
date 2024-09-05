@@ -236,7 +236,7 @@ Ensure the `user_id` is correctly extracted from the redirect URL after the OAut
 
 ## Contributing
 
-We welcome contributions!Please feel free to submit a Pull Request.
+We welcome contributions! Please feel free to submit a Pull Request.
 
 ## Support
 
